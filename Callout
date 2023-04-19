@@ -1,0 +1,18 @@
+endpoint, please check Setup->Security->Remote site settings. endpoint = https://postman-echo.com/get?foo1=bar1&foo2=bar2
+public class TestHttpCallout {
+
+    public static void myHttpCallout(){
+        
+        // Create a new HTTP request object
+    HttpRequest req = new HttpRequest();
+    req.setEndpoint('https://postman-echo.com/get?foo1=bar1&foo2=bar2');
+    req.setMethod('GET');
+    
+    // Send the HTTP request and get the response
+    Http http = new Http();
+    HttpResponse res = http.send(req)
+    // Print the response body using System.debug
+    System.debug(res.getBody());
+
+    }
+}
