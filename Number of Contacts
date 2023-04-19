@@ -1,0 +1,36 @@
+trigger countContactsunderAcoount on Contact (after insert, after update,after delete,after undelete)
+{
+	Set<Id> idSet= new Set<Id>();
+    List<Account>accList=new List<Account>();
+    if (trigger.isAfter)
+    {
+        if(trigger.isInsert ||trigger.isUpdate || trigger.isundelete)
+        {
+            for(Contact ct:trigger.new)
+            {
+                idSet.add(ct.AccountId);
+       
+            }
+        }
+        if (trigger.isDelete)
+    {
+         for(Contact ct:trigger.old)
+            {
+                idSet.add(ct.AccountId);
+            }
+    }
+        List<Account> acList=[select Id, name,(select Id from contacts) from Account where Id=:idSet];
+        for(Account ac:acList)
+        {
+            Integer totalCount = ac.contacts.size();
+            ac.Number_of_Contacts__c =TotalCount;
+            accList.add(ac);
+       
+        }
+        if(accList !=null)
+        {
+            update accList;
+        }
+    }
+    
+}
