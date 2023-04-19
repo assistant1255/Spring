@@ -1,0 +1,69 @@
+Html
+RecentAccounts.cmp
+<aura:component controller="AccountController" implements="flexipage:availableForAllPageTypes" access="global">
+    <aura:attribute name="accounts" type="Account[]"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    
+    <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+        <thead>
+            <tr class="slds-text-title_caps">
+                <th scope="col">
+                    <div class="slds-truncate">Account Name</div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate">Account Number</div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate">Industry</div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <aura:iteration items="{!v.accounts}" var="account">
+                <tr>
+                    <td>
+                        <div class="slds-truncate">{!account.Name}</div>
+                    </td>
+                    <td>
+                        <div class="slds-truncate">{!account.AccountNumber}</div>
+                    </td>
+                    <td>
+                        <div class="slds-truncate">{!account.Industry}</div>
+                    </td>
+                </tr>
+            </aura:iteration>
+        </tbody>
+    </table>
+</aura:component>
+
+({
+    init: function(component, event, helper) {
+        var action = component.get("c.getRecentlyCreatedAccounts");
+        action.setCallback(this, function(response) {
+            var state = response.getState();
+            if (state === "SUCCESS") {
+                component.set("v.accounts", response.getReturnValue());
+            }
+            else {
+                console.log("Failed with state: " + state);
+            }
+        });
+        $A.enqueueAction(action);
+    }
+})
+Apex controller code:
+
+Step 3 – Create Apex class
+RecentAccounts.apxc
+public class AccountController {
+    @AuraEnabled
+    public static List<Account> getRecentlyCreatedAccounts() {
+        return [SELECT Name, AccountNumber, Industry FROM Account ORDER BY CreatedDate DESC LIMIT 10];
+    }
+}
+
+html
+<aura:application extends="force:slds">
+    <c:/RecentAccounts >
+</aura:application>
